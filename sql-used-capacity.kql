@@ -1,0 +1,39 @@
+resources
+| where type in~ (
+    'microsoft.sql/servers/databases',
+    'microsoft.sql/managedinstances'
+)
+| join kind=leftouter (
+    resourcecontainers
+    | where type == 'microsoft.resources/subscriptions'
+    | project
+        subscriptionId,
+        SubscriptionName = name
+) on subscriptionId
+| extend
+    ResourceType = type,
+    ResourceGroup = resourceGroup,
+    Location = location,
+    // SQL Database
+    DbSkuName = tostring(sku.name),
+    DbSkuTier = tostring(sku.tier),
+    DbCapacity = toint(sku.capacity),
+    // SQL Managed Instance
+    MiSkuName = tostring(properties.sku.name),
+    MiVCores = toint(properties.vCores),
+    // Storage
+    DbMaxSizeBytes = tolong(properties.maxSizeBytes),
+    DbMaxSizeGB = round(todouble(properties.maxSizeBytes)/1024/1024/1024, 2),
+    MiStorageGB = toint(properties.storageSizeInGB)
+| project
+    SubscriptionName,
+    subscriptionId,
+    ResourceGroup,
+    Name = name,
+    ResourceType,
+    Location,
+    SkuName = coalesce(DbSkuName, MiSkuName),
+    ServiceTier = DbSkuTier,
+    VCores = coalesce(DbCapacity, MiVCores),
+    StorageGB = coalesce(DbMaxSizeGB, todouble(MiStorageGB))
+| order by SubscriptionName asc, ResourceType asc, Name asc

@@ -1,0 +1,31 @@
+resources
+| where type =~ 'microsoft.storage/storageaccounts'
+| join kind=leftouter (
+    resourcecontainers
+    | where type == 'microsoft.resources/subscriptions'
+    | project
+        subscriptionId,
+        SubscriptionName = name
+) on subscriptionId
+| extend
+    Sku = tostring(sku.name),
+    Replication = tostring(sku.name),
+    Kind = tostring(kind),
+    AccessTier = tostring(properties.accessTier),
+    IsHnsEnabled = tostring(properties.isHnsEnabled),
+    SupportsBlob = true,
+    SupportsFiles = true,
+    SupportsADLS = iff(tobool(properties.isHnsEnabled), true, false)
+| project
+    SubscriptionName,
+    subscriptionId,
+    ResourceGroup = resourceGroup,
+    StorageAccount = name,
+    Location = location,
+    Kind,
+    Sku,
+    AccessTier,
+    SupportsBlob,
+    SupportsFiles,
+    SupportsADLS
+| order by SubscriptionName asc, StorageAccount asc
