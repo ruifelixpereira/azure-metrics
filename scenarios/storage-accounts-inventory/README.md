@@ -1,6 +1,6 @@
 # Storage account inventory
 
-[storage-accounts.kql](storage-accounts.kql) lists storage accounts and their configuration, including location, kind, SKU, access tier, and hierarchical namespace support. Run it using the same portal steps, or with Azure CLI:
+The query [storage-accounts.kql](storage-accounts.kql) lists storage accounts and their configuration, including location, kind, SKU, access tier, and hierarchical namespace support. Run it using the same portal steps, or with Azure CLI:
 
 ```bash
 az graph query \

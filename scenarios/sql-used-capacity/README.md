@@ -1,6 +1,6 @@
 # SQL configured capacity
 
-[sql-used-capacity.kql](sql-used-capacity.kql) lists Azure SQL databases and SQL managed instances, including subscription, resource group, SKU, service tier, vCores, and configured storage capacity.
+The query [sql-used-capacity.kql](sql-used-capacity.kql) lists Azure SQL databases and SQL managed instances, including subscription, resource group, SKU, service tier, vCores, and configured storage capacity.
 
 To run it in the Azure portal:
 
